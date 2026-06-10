@@ -5,6 +5,12 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  // Mientras se desarrolla se configura para aceptar peticiones de cualquier dominio.
+  app.enableCors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  });
+
   // Esta en la documentacion, agrega varios headers HTTP de seguridad en las respuestas, como
   // X-Content-Type-Options: nosniff, X-Frame-Options: SAMEORIGIN, Referrer-Policy: no-referrer.
   app.use(helmet());
