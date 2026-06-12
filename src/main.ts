@@ -5,6 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { ConsoleLogger } from '@nestjs/common';
 import morgan from 'morgan';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -13,11 +14,21 @@ async function bootstrap() {
       timestamp: true,
     }),
   });
+  // Le pedimos el configService, ya que antes en el create de Nest, ya creo que contenedor de DI.
+  const configService = app.get(ConfigService);
+
   // Usamos logger morgan para tener en consola respuestas de los endpoints.
   app.use(morgan('dev'));
 
-  // Le pedimos el configService, ya que antes en el create de Nest, ya creo que contenedor de DI.
-  const configService = app.get(ConfigService);
+  const config = new DocumentBuilder()
+    .setTitle('TastFlow API')
+    .setDescription('API')
+    .setVersion('1.0')
+    .build();
+
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
+
   // Mientras se desarrolla se configura para aceptar peticiones de cualquier dominio.
   app.enableCors({
     origin: configService.get<string>('CORS_ORIGIN'),
