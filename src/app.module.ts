@@ -12,9 +12,11 @@ import * as Joi from 'joi';
     // mas orden.
     ConfigModule.forRoot({
       isGlobal: true, // Disponible en toda la app.
-      envFilePath: `.env.${process.env.NODE_ENV}`,
+      envFilePath: `.env.${process.env.NODE_ENV}`, // NODE_ENV se entrega en los scripts de package.json
       validationSchema: Joi.object({
         JWT_SECRET: Joi.string().required(),
+        PORT: Joi.number().required(),
+        CORS_ORIGIN: Joi.string().required(),
       }),
     }),
     // Debo recordar que con servidores/proxies detras se rompe el rate limiting y debo habilitar trust
