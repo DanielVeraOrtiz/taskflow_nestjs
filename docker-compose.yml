@@ -47,7 +47,7 @@ services:
     # En algún punto entendí que siempre leia .env y no .env.development y cosa así. Pero ahora me di cuenta
     # con env_file puedo especificar donde buscar las variables de entorno que usa aquí.
     env_file:
-      # Copia el archivo .env a la imagen.
+      # Copia el archivo .env.development a la imagen.
       - .env.development
     environment:
       NODE_ENV: development

@@ -25,6 +25,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         DB_NAME: Joi.string().required(),
       }),
     }),
+    // Configuracion de TypeOrmModule. Uso de forRootAsync para utilizar useFactory.
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
