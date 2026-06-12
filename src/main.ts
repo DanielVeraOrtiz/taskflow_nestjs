@@ -3,9 +3,19 @@ import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
+import { ConsoleLogger } from '@nestjs/common';
+import morgan from 'morgan';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: new ConsoleLogger({
+      prefix: 'HOLIWI',
+      timestamp: true,
+    }),
+  });
+  // Usamos logger morgan para tener en consola respuestas de los endpoints.
+  app.use(morgan('dev'));
+
   // Le pedimos el configService, ya que antes en el create de Nest, ya creo que contenedor de DI.
   const configService = app.get(ConfigService);
   // Mientras se desarrolla se configura para aceptar peticiones de cualquier dominio.
