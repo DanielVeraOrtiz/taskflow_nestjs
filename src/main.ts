@@ -38,7 +38,7 @@ async function bootstrap() {
   // Esta en la documentacion, agrega varios headers HTTP de seguridad en las respuestas, como
   // X-Content-Type-Options: nosniff, X-Frame-Options: SAMEORIGIN, Referrer-Policy: no-referrer.
   app.use(helmet());
-  await app.listen(configService.get<number>('PORT') ?? 3000, '0.0.0.0');
+  await app.listen(configService.get<number>('PORT') ?? 3000, '0.0.0.0'); // Textual 0.0.0.0 para que docker escuche en todas las redes.
 }
 
 // Cambio debido a que me indica que las promesas deben ser esperadas con su catch y then.

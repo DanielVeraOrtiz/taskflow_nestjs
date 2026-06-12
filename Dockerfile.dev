@@ -12,7 +12,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 RUN pnpm install --frozen-lockfile
 
-# Código fuente
+# Código fuente, archivos que necesito, como el .sh
 COPY . .
 
 # Scripts ejecutables
@@ -24,4 +24,6 @@ ENV NODE_ENV=development
 # Puerto Nest
 EXPOSE 3000
 
+# Con el bind mount pierde los permisos y pareciera ejecutarse con node, con sh se evita el problema
+# indicando con cual correr.
 CMD ["sh", "./scripts/docker-entrypoint.dev.sh"]
