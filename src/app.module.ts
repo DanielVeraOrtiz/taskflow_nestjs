@@ -6,6 +6,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         },
       ],
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [
