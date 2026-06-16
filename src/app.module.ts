@@ -23,6 +23,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         DB_USER: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+        TIME_TO_LIVE: Joi.number().required(),
+        RATE_LIMIT: Joi.number().required(),
       }),
     }),
     // Configuracion de TypeOrmModule. Uso de forRootAsync para utilizar useFactory.
@@ -45,12 +47,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     // Debo recordar que con servidores/proxies detras se rompe el rate limiting y debo habilitar trust
     // proxy en main.ts.
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000, // time to live de 60 seg.
-        limit: 20, // limite de 20 request en 60 seg a una ruta.
-      },
-    ]),
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => [
+        {
+          ttl: config.get<number>('TIME_TO_LIVE') as number, // time to live de 60 seg.
+          limit: config.get<number>('RATE_LIMIT') as number, // limite de 10 request en 60 seg a una ruta.
+        },
+      ],
+    }),
   ],
   controllers: [AppController],
   providers: [
