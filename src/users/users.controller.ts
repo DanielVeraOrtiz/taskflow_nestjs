@@ -1,9 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpStatus,
+  HttpCode,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiNoContentResponse,
+} from '@nestjs/swagger';
 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ResponseUserDto } from './dto/response-user.dto';
 
 import { ParseIntPipe } from '@nestjs/common';
 
@@ -14,14 +33,20 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
-  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiCreatedResponse({
+    description: 'User created successfully',
+    type: ResponseUserDto,
+  })
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
+  @ApiOkResponse({
+    description: 'Users retrieved successfully',
+    type: [ResponseUserDto],
+  })
   findAll() {
     return this.usersService.findAll();
   }
@@ -29,7 +54,10 @@ export class UsersController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a user by id' })
   @ApiParam({ name: 'id', example: 1 })
-  @ApiResponse({ status: 200, description: 'User retrieved successfully' })
+  @ApiOkResponse({
+    description: 'User retrieved successfully',
+    type: ResponseUserDto,
+  })
   @ApiResponse({ status: 404, description: 'User not found' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findOne(id);
@@ -38,16 +66,22 @@ export class UsersController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update a user' })
   @ApiParam({ name: 'id', example: 1 })
-  @ApiResponse({ status: 200, description: 'User updated successfully' })
+  @ApiOkResponse({
+    description: 'User updated successfully',
+    type: ResponseUserDto,
+  })
   @ApiResponse({ status: 404, description: 'User not found' })
   update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a user' })
   @ApiParam({ name: 'id', example: 1 })
-  @ApiResponse({ status: 200, description: 'User deleted successfully' })
+  @ApiNoContentResponse({
+    description: 'User deleted successfully',
+  })
   @ApiResponse({ status: 404, description: 'User not found' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);

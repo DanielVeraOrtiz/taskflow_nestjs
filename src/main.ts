@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { ConsoleLogger } from '@nestjs/common';
 import morgan from 'morgan';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -20,6 +21,15 @@ async function bootstrap() {
   // Usamos logger morgan para tener en consola respuestas de los endpoints solo en entorno de desarrollo
   // para produccion usualmente se prefiere formato json por los sistemas que analizan estos logs.
   if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+
+  // ValidationPipe para comprobar params, bodys de request, built in de Nest.
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('TastFlow API')
