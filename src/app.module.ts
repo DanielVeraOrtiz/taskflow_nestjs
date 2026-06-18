@@ -26,6 +26,7 @@ import { UsersModule } from './users/users.module';
         DB_NAME: Joi.string().required(),
         TIME_TO_LIVE: Joi.number().required(),
         RATE_LIMIT: Joi.number().required(),
+        DB_SYNCHRONIZE: Joi.string().required(),
       }),
     }),
     // Configuracion de TypeOrmModule. Uso de forRootAsync para utilizar useFactory.
@@ -42,7 +43,7 @@ import { UsersModule } from './users/users.module';
         database: config.get<string>('DB_NAME'),
 
         autoLoadEntities: true,
-        synchronize: false,
+        synchronize: config.get<string>('DB_SYNCHRONIZE') === 'true',
         logging: true,
       }),
     }),

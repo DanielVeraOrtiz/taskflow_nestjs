@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 
-dotenv.config({ path: '.env.development' });
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 export default new DataSource({
   type: 'postgres',
@@ -16,4 +16,8 @@ export default new DataSource({
 
   entities: ['src/**/*.entity.ts'],
   migrations: ['src/database/migrations/*.ts'],
+
+  synchronize: process.env.DB_SYNCHRONIZE === 'true',
+  migrationsRun: false,
+  logging: true,
 });
