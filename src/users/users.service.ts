@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { QueryFailedError } from 'typeorm';
+import { ResponseUserDto } from './dto/response-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +15,7 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
     const passwordHash = await bcrypt.hash(createUserDto.password, 10);
     // No uso spread, debido a que me quedaria password dentro de objeto.
     const user = this.usersRepository.create({
@@ -36,19 +37,19 @@ export class UsersService {
   }
 
   // Esta bien que devuelva una lista vacia en caso que no hayan usuarios
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<ResponseUserDto[]> {
     return this.usersRepository.find();
   }
 
   // En cada caso que se busque un usuario por id se lanza excepcion si no lo encuentra
   // En el caso contrario devuelve un string vacio.
-  async findOne(id: number): Promise<User> {
+  async findOne(id: number): Promise<ResponseUserDto> {
     const user = await this.usersRepository.findOneBy({ id });
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<ResponseUserDto> {
     const user = await this.usersRepository.findOneBy({ id });
     // Existe el usuario?
     if (!user) {

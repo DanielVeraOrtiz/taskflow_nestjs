@@ -4,8 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './dto/signin-auth.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { User } from 'src/users/entities/user.entity';
-import { ResponseUserDto } from 'src/users/dto/response-user.dto';
+import { ResponseAuthRoutesDto } from './dto/response-auth-routes.dto';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +13,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(signInDto: SignInDto): Promise<{ access_token: string; user: ResponseUserDto }> {
+  async signIn(signInDto: SignInDto): Promise<ResponseAuthRoutesDto> {
     const user = await this.usersService.findOneByEmail(signInDto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -39,7 +38,7 @@ export class AuthService {
     };
   }
 
-  async signUp(signUpDto: CreateUserDto): Promise<{ access_token: string; user: User }> {
+  async signUp(signUpDto: CreateUserDto): Promise<ResponseAuthRoutesDto> {
     const user = await this.usersService.create(signUpDto);
 
     const payload = { sub: user.id, email: user.email };

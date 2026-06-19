@@ -31,16 +31,6 @@ import { ParseIntPipe } from '@nestjs/common';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiCreatedResponse({
-    description: 'User created successfully',
-    type: ResponseUserDto,
-  })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
   @Get()
   @ApiOperation({ summary: 'Get all users' })
   @ApiOkResponse({
