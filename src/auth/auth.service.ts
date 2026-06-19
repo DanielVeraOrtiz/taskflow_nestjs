@@ -2,6 +2,10 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { SignInDto } from './dto/signin-auth.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { User } from 'src/users/entities/user.entity';
+import { ResponseUserDto } from 'src/users/dto/response-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -10,16 +14,39 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(email: string, password: string): Promise<{ access_token: string }> {
-    const user = await this.usersService.findOneByEmail(email);
-    const isValidPassword = await bcrypt.compare(password, user?.passwordHash);
+  async signIn(signInDto: SignInDto): Promise<{ access_token: string; user: ResponseUserDto }> {
+    const user = await this.usersService.findOneByEmail(signInDto.email);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    const isValidPassword = await bcrypt.compare(signInDto.password, user?.passwordHash);
     if (!isValidPassword) {
-      throw new UnauthorizedException('Wrong Password');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const payload = { sub: user.id, email: user.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    };
+  }
+
+  async signUp(signUpDto: CreateUserDto): Promise<{ access_token: string; user: User }> {
+    const user = await this.usersService.create(signUpDto);
+
+    const payload = { sub: user.id, email: user.email };
+
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+      user: user,
     };
   }
 }

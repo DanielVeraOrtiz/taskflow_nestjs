@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   Entity,
   Column,
@@ -23,6 +24,7 @@ export class User {
   // @Exclude() trae todo de la bdd y luego saca la passwordHash al transformar
   // el objeto para enviarlo al cliente. select: false provoca que al pedir un usuario
   // este te venga desde la bdd sin su passwordHash.
+  @Exclude()
   @Column({ length: 255, select: false })
   passwordHash!: string;
 
