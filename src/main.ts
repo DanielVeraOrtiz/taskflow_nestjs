@@ -18,6 +18,10 @@ async function bootstrap() {
   // Le pedimos el configService, ya que antes en el create de Nest, ya creo que contenedor de DI.
   const configService = app.get(ConfigService);
 
+  // Para evitar problemas del rate limiting en caso de proxies y servidores, y obtenga
+  // bien la ip de la maquina que manda requests.
+  app.set('trust proxy', true);
+
   // Usamos logger morgan para tener en consola respuestas de los endpoints solo en entorno de desarrollo
   // para produccion usualmente se prefiere formato json por los sistemas que analizan estos logs.
   if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));

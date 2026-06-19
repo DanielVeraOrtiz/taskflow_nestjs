@@ -14,7 +14,7 @@ import { UsersModule } from './users/users.module';
     // mas orden.
     ConfigModule.forRoot({
       isGlobal: true, // Disponible en toda la app.
-      envFilePath: `.env.${process.env.NODE_ENV}`, // NODE_ENV se entrega en los scripts de package.json
+      envFilePath: [`.env.${process.env.NODE_ENV || 'development'}`, '.env'], // NODE_ENV se entrega en los scripts de package.json
       validationSchema: Joi.object({
         JWT_SECRET: Joi.string().required(),
         PORT: Joi.number().required(),

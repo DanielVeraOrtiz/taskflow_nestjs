@@ -20,6 +20,9 @@ export class User {
   @Column({ unique: true, length: 100 })
   email!: string;
 
+  // @Exclude() trae todo de la bdd y luego saca la passwordHash al transformar
+  // el objeto para enviarlo al cliente. select: false provoca que al pedir un usuario
+  // este te venga desde la bdd sin su passwordHash.
   @Column({ length: 255, select: false })
   passwordHash!: string;
 
