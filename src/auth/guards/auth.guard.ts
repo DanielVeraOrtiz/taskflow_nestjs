@@ -13,6 +13,9 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Buscar si hay un decorador con metadata con esa key. Esta es para saber si la ruta es publica.
+    // En caso de ser publica el guard devuelve de inmediato true, lo cual implica que tiene acceso a la ruta
+    // a la cual se dirige la request.
     const isPublicRoute = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -22,17 +25,16 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
+    // Obtenemos el token de la request si existe y luego verificamos si es valido
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
       throw new UnauthorizedException('Not authorized');
     }
     try {
-      // 💡 Here the JWT secret key that's used for verifying the payload
-      // is the key that was passed in the JwtModule
       const payload = await this.jwtService.verifyAsync<JwtPayloadDto>(token);
-      // 💡 We're assigning the payload to the request object here
-      // so that we can access it in our route handlers
+      // Si es valido el JWT, entonces asignamos el payload de este a user de la request. Para esto es que necesitabamos
+      // extender Request del namespace Express.
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException('Not authorized');
