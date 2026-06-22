@@ -28,6 +28,7 @@ import { AuthModule } from './auth/auth.module';
         TIME_TO_LIVE: Joi.number().required(),
         RATE_LIMIT: Joi.number().required(),
         DB_SYNCHRONIZE: Joi.string().required(),
+        JWT_EXPIRES: Joi.string().required(),
       }),
     }),
     // Configuracion de TypeOrmModule. Uso de forRootAsync para utilizar useFactory.

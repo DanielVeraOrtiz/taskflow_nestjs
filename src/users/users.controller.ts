@@ -1,32 +1,22 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpStatus,
-  HttpCode,
-} from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete, HttpStatus, HttpCode } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiParam,
-  ApiCreatedResponse,
   ApiOkResponse,
   ApiNoContentResponse,
 } from '@nestjs/swagger';
 
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ResponseUserDto } from './dto/response-user.dto';
 
 import { ParseIntPipe } from '@nestjs/common';
+import { AuthDocsDecorators } from 'src/common/decorators/auth-docs.decorator';
 
 @ApiTags('Users')
+@AuthDocsDecorators()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

@@ -20,6 +20,11 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
+
+    if (!user?.isActive) {
+      throw new UnauthorizedException('The user is no longer active');
+    }
+
     const isValidPassword = await bcrypt.compare(signInDto.password, user?.passwordHash);
     if (!isValidPassword) {
       throw new UnauthorizedException('Invalid credentials');

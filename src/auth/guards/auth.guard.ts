@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { JwtPayloadDto } from '../dto/jwt-payload.dto';
 import { Reflector } from '@nestjs/core';
-import { IS_PUBLIC_KEY } from '../decorators/public-route.decorator';
+import { IS_PUBLIC_KEY } from '../../common/decorators/public-route.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -35,7 +35,7 @@ export class AuthGuard implements CanActivate {
       // so that we can access it in our route handlers
       request['user'] = payload;
     } catch {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Not authorized');
     }
     return true;
   }

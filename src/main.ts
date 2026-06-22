@@ -39,6 +39,14 @@ async function bootstrap() {
     .setTitle('TastFlow API')
     .setDescription('API')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'JWT-auth',
+    )
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
