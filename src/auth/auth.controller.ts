@@ -7,11 +7,13 @@ import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { ResponseUserDto } from 'src/users/dto/response-user.dto';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtPayloadDto } from './dto/jwt-payload.dto';
+import { PublicRoute } from './decorators/public-route.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @PublicRoute()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @ApiOperation({ summary: 'Login for users' })
@@ -23,6 +25,7 @@ export class AuthController {
     return this.authService.signIn(signInDto);
   }
 
+  @PublicRoute()
   @HttpCode(HttpStatus.CREATED)
   @Post('signup')
   @ApiOperation({ summary: 'Sign up for users' })
