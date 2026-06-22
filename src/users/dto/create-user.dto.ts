@@ -1,6 +1,8 @@
 import { IsString, IsEmail, MaxLength, MinLength, IsStrongPassword } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
+// Se uso uso de class validator de cara al ValidationPipe global y ApiProperty para que aparezca en
+// la documentacion y esquemas.
 export class CreateUserDto {
   @ApiProperty({
     example: 'Esteban',

@@ -25,6 +25,7 @@ export class UsersService {
       passwordHash,
     });
 
+    // try/catch en caso de que al crear el usuario me salga error de violacion de unicidad por email
     try {
       return await this.usersRepository.save(user);
     } catch (error) {
@@ -41,8 +42,8 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  // En cada caso que se busque un usuario por id se lanza excepcion si no lo encuentra
-  // En el caso contrario devuelve un string vacio.
+  // Se busca un user por id y en caso de no encontralo se arroja una excepcion built in de nest respecto
+  // a no encontrar un elemento.
   async findOne(id: number): Promise<ResponseUserDto> {
     const user = await this.usersRepository.findOneBy({ id });
     if (!user) throw new NotFoundException('User not found');
@@ -66,6 +67,7 @@ export class UsersService {
     // se repiten entonces se sobrescriben y luego se guarda este user con los campos actualizados.
     Object.assign(user, userData);
 
+    // try/catch en caso de email repetido error.
     try {
       return await this.usersRepository.save(user);
     } catch (error) {
@@ -80,11 +82,16 @@ export class UsersService {
   async remove(id: number): Promise<void> {
     const result = await this.usersRepository.delete(id);
 
+    // Intento borrar primero y si nada fue borrado entonces lanzo la excepcion que es mejor que preguntar
+    // antes si existe el usuario usando un find.
     if (result.affected === 0) {
       throw new NotFoundException('User not found');
     }
   }
 
+  // Exclusivo para el login de auth. Es necesario un select, debido a que por defecto del repository
+  // se coloco que no entre passwordHash. Sin embargo, en login necesito la passwordHash para comprobar
+  // si la password que mando es correcta.
   async findOneByEmail(email: string): Promise<User | null> {
     return this.usersRepository.findOne({
       where: { email },

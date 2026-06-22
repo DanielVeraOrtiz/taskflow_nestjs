@@ -14,6 +14,7 @@ import { APP_GUARD } from '@nestjs/core';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         global: true,
+        // Se configuran ambas cosas como variables de entorno
         secret: config.getOrThrow<string>('JWT_SECRET'),
         signOptions: { expiresIn: config.getOrThrow('JWT_EXPIRES') },
       }),
@@ -22,6 +23,8 @@ import { APP_GUARD } from '@nestjs/core';
   controllers: [AuthController],
   providers: [
     AuthService,
+    // Se hace global el guard de Authorization. Por esta razon se crea el decorador de si una ruta es publica, debido
+    // a que cualquier request pasara por el guard, y en caso de tener la metadata de ruta publica pues pasara de inmediato el guard.
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

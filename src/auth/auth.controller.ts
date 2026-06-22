@@ -14,6 +14,7 @@ import { AuthDocsDecorators } from '../common/decorators/auth-docs.decorator';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  // Se coloca decorador con metadata de ruta publica a login y signup
   @PublicRoute()
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -46,6 +47,7 @@ export class AuthController {
     description: 'User is authenticated',
     type: [ResponseUserDto],
   })
+  // Se utiliza decorador CurrentUser para obtener request.user.
   authMe(@CurrentUser() user: JwtPayloadDto) {
     return this.authService.authMe(user);
   }

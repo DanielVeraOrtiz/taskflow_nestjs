@@ -16,11 +16,13 @@ export class AuthService {
   ) {}
 
   async signIn(signInDto: SignInDto): Promise<ResponseAuthRoutesDto> {
+    // Ojo que no repito logica, uso el usersService directo en lugar de hacerlo aqui, usersService
+    // se encarga de cosas de users. Aqui necesito la passwordHash, por eso se hizo ese metodo nuevo con select.
     const user = await this.usersService.findOneByEmail(signInDto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-
+    // En caso que el user no este activo, o fue baneado o demas.
     if (!user?.isActive) {
       throw new UnauthorizedException('The user is no longer active');
     }
@@ -31,6 +33,7 @@ export class AuthService {
     }
 
     const payload = { sub: user.id, email: user.email };
+    // Tanto en login como en signup se devuelve access_token y user con el objeto entero menos passwordHash.
     return {
       access_token: await this.jwtService.signAsync(payload),
       user: {
@@ -56,6 +59,9 @@ export class AuthService {
     };
   }
 
+  // Cuando el usuario se sale de una pagina, y vuelve a entrar, tendra el jwt, con el cual debera enviar una solicitud
+  // a auth/me. Aqui se buscara el user si existe y se devolvera, pero antes pasara por el guard que comprobara
+  // que el jwt no haya vencido y sea valido
   async authMe(user: JwtPayloadDto): Promise<ResponseUserDto> {
     const userRow = await this.usersService.findOne(user.sub);
     return userRow;

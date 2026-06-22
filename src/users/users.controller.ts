@@ -16,12 +16,16 @@ import { ParseIntPipe } from '@nestjs/common';
 import { AuthDocsDecorators } from 'src/common/decorators/auth-docs.decorator';
 
 @ApiTags('Users')
+// Auth docs decorators son dos decorators de swagger para documentar que neceista Bearer Auth y
+// documentar que necesita en Authorization un Bearer jwt.
 @AuthDocsDecorators()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  // ApiOperation y ApiOkResponse de swagger para documentar, uno para dar un resumen del endpoint y otro
+  // para dar la descripcion de la respose al salir bien conjunto con como se veria la response misma.
   @ApiOperation({ summary: 'Get all users' })
   @ApiOkResponse({
     description: 'Users retrieved successfully',
@@ -33,6 +37,7 @@ export class UsersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a user by id' })
+  // ApiParam de swagger para documentar en este que necesita un param de numbre id.
   @ApiParam({ name: 'id', example: 1 })
   @ApiOkResponse({
     description: 'User retrieved successfully',
