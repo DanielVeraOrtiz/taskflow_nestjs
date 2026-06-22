@@ -5,6 +5,8 @@ import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './dto/signin-auth.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { ResponseAuthRoutesDto } from './dto/response-auth-routes.dto';
+import { JwtPayloadDto } from './dto/jwt-payload.dto';
+import { ResponseUserDto } from 'src/users/dto/response-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -47,5 +49,10 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
       user: user,
     };
+  }
+
+  async authMe(user: JwtPayloadDto): Promise<ResponseUserDto> {
+    const userRow = await this.usersService.findOne(user.sub);
+    return userRow;
   }
 }
