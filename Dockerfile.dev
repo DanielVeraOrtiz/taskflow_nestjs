@@ -1,0 +1,29 @@
+# Imagen base liviana
+FROM node:22-alpine
+
+# Instalar pnpm
+RUN corepack enable
+
+# Directorio de trabajo
+WORKDIR /app
+
+# Dependencias
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+RUN pnpm install --frozen-lockfile
+
+# Código fuente, archivos que necesito, como el .sh
+COPY . .
+
+# Scripts ejecutables
+RUN chmod +x scripts/docker-entrypoint.dev.sh
+
+# Entorno
+ENV NODE_ENV=development
+
+# Puerto Nest
+EXPOSE 3000
+
+# Con el bind mount pierde los permisos y pareciera ejecutarse con node, con sh se evita el problema
+# indicando con cual correr.
+CMD ["sh", "./scripts/docker-entrypoint.dev.sh"]
