@@ -24,6 +24,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ResponseProjectDto } from './dto/response-project.dto';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { JwtPayloadDto } from 'src/auth/dto/jwt-payload.dto';
 
 @ApiTags('Projects')
 @AuthDocsDecorators()
@@ -37,8 +39,8 @@ export class ProjectsController {
     description: 'Project created successfully',
     type: ResponseProjectDto,
   })
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.create(createProjectDto);
+  create(@Body() createProjectDto: CreateProjectDto, @CurrentUser() user: JwtPayloadDto) {
+    return this.projectsService.create(createProjectDto, user);
   }
 
   @Get()

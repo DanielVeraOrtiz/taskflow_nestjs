@@ -26,6 +26,8 @@ export class UsersService {
     });
 
     // try/catch en caso de que al crear el usuario me salga error de violacion de unicidad por email
+    // Con o sin await el resultado sera equivalente al final. Aqui se usa await por si salta un error
+    // y que lo agarre el catch.
     try {
       return await this.usersRepository.save(user);
     } catch (error) {
