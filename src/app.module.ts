@@ -6,6 +6,8 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -13,7 +15,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     // mas orden.
     ConfigModule.forRoot({
       isGlobal: true, // Disponible en toda la app.
-      envFilePath: `.env.${process.env.NODE_ENV}`, // NODE_ENV se entrega en los scripts de package.json
+      envFilePath: [`.env.${process.env.NODE_ENV || 'development'}`, '.env'], // NODE_ENV se entrega en los scripts de package.json
       validationSchema: Joi.object({
         JWT_SECRET: Joi.string().required(),
         PORT: Joi.number().required(),
@@ -25,6 +27,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         DB_NAME: Joi.string().required(),
         TIME_TO_LIVE: Joi.number().required(),
         RATE_LIMIT: Joi.number().required(),
+        DB_SYNCHRONIZE: Joi.string().required(),
+        JWT_EXPIRES: Joi.string().required(),
       }),
     }),
     // Configuracion de TypeOrmModule. Uso de forRootAsync para utilizar useFactory.
@@ -41,7 +45,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         database: config.get<string>('DB_NAME'),
 
         autoLoadEntities: true,
-        synchronize: false,
+        synchronize: config.get<string>('DB_SYNCHRONIZE') === 'true',
         logging: true,
       }),
     }),
@@ -56,6 +60,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         },
       ],
     }),
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
